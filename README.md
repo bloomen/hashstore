@@ -1,0 +1,1 @@
+A simple hash store.
