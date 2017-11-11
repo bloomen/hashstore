@@ -1,12 +1,10 @@
-from flask import Flask, request
+from flask import Flask, request, abort
 from flask_api import status
 app = Flask(__name__)
 
 KEY = 'k'
 VALUE = 'v'
 INDEX = 'i'
-
-BR = "bad request", status.HTTP_400_BAD_REQUEST
 NIL = "None"
 
 store = {}
@@ -36,7 +34,7 @@ def get():
     key = request.args.get(KEY)
     index = request.args.get(INDEX)
     if key is None and index is None:
-        return BR
+        abort(status.HTTP_400_BAD_REQUEST)
     s = get_store()
     if key is not None:
         value = s.get(key)
@@ -48,7 +46,7 @@ def get():
         try:
             ind = int(index)
         except:
-            return BR
+            abort(status.HTTP_400_BAD_REQUEST)
         i = 0 
         for k, _ in s.items():
             if i == ind:
@@ -62,7 +60,7 @@ def put():
     key = request.args.get(KEY)
     value = request.args.get(VALUE)
     if key is None or value is None:
-        return BR
+        abort(status.HTTP_400_BAD_REQUEST)
     s = get_store()
     old_value = s.get(key)
     s[key] = value
@@ -76,7 +74,7 @@ def put():
 def remove():
     key = request.args.get(KEY)
     if key is None:
-        return BR
+        abort(status.HTTP_400_BAD_REQUEST)
     s = get_store()
     old_value = s.get(key)
     if old_value is None:
