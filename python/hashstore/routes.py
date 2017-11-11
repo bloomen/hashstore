@@ -5,7 +5,7 @@ app = Flask(__name__)
 KEY = 'k'
 VALUE = 'v'
 INDEX = 'i'
-NIL = "None"
+NIL = ''
 
 store = {}
 
@@ -44,9 +44,9 @@ def get():
     if index is not None:
         try:
             ind = int(index)
-        except:
+        except ValueError:
             abort(status.HTTP_400_BAD_REQUEST)
-        i = 0 
+        i = 0
         for k, _ in s.items():
             if i == ind:
                 return k, status.HTTP_200_OK
