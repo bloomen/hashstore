@@ -11,22 +11,16 @@ NIL = ''
 store = Store()
 
 
-def get_store():
-    global store
-    return store
-
-
 @app.route("/clear")
 def clear():
-    s = get_store()
-    size = s.size()
-    s.clear()
+    size = store.size()
+    store.clear()
     return str(size), status.HTTP_200_OK
 
 
 @app.route("/size")
 def size():
-    return str(get_store().size()), status.HTTP_200_OK
+    return str(store.size()), status.HTTP_200_OK
 
 
 @app.route("/get")
@@ -35,9 +29,8 @@ def get():
     index = request.args.get(INDEX)
     if key is None and index is None:
         abort(status.HTTP_400_BAD_REQUEST)
-    s = get_store()
     if key is not None:
-        value = s.get(key)
+        value = store.get(key)
         if value is None:
             return NIL, status.HTTP_204_NO_CONTENT
         else:
@@ -47,7 +40,7 @@ def get():
             ind = int(index)
         except ValueError:
             abort(status.HTTP_400_BAD_REQUEST)
-        k = s.key(ind)
+        k = store.key(ind)
         if k is not None:
             return k
         return NIL, status.HTTP_204_NO_CONTENT
@@ -59,9 +52,8 @@ def put():
     value = request.args.get(VALUE)
     if key is None or value is None:
         abort(status.HTTP_400_BAD_REQUEST)
-    s = get_store()
-    old_value = s.get(key)
-    s.put(key, value)
+    old_value = store.get(key)
+    store.put(key, value)
     if old_value is None:
         return NIL, status.HTTP_200_OK
     else:
@@ -73,10 +65,9 @@ def remove():
     key = request.args.get(KEY)
     if key is None:
         abort(status.HTTP_400_BAD_REQUEST)
-    s = get_store()
-    old_value = s.get(key)
+    old_value = store.get(key)
     if old_value is None:
         return NIL, status.HTTP_204_NO_CONTENT
     else:
-        s.remove(key)
+        store.remove(key)
         return old_value, status.HTTP_200_OK
