@@ -54,7 +54,7 @@ class Test(unittest.TestCase):
         d, c = req('get', i="0")
         self.assertEqual(("wang", 200), (d, c))
 
-    def test_bad_request(self):
+    def test_get_bad_request(self):
         _, c = req('get')
         self.assertEqual(400, c)
         _, c = req('get', i="not_int")
