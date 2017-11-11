@@ -2,6 +2,9 @@ from flask import Flask, request
 from flask_api import status
 app = Flask(__name__)
 
+KEY = 'k'
+VALUE = 'v'
+INDEX = 'i'
 
 BR = "bad request", status.HTTP_400_BAD_REQUEST
 NIL = "None"
@@ -30,8 +33,8 @@ def size():
 
 @app.route("/get")
 def get():
-    key = request.args.get('key')
-    index = request.args.get('index')
+    key = request.args.get(KEY)
+    index = request.args.get(INDEX)
     if key is None and index is None:
         return BR
     s = get_store()
@@ -56,8 +59,8 @@ def get():
 
 @app.route("/put")
 def put():
-    key = request.args.get('key')
-    value = request.args.get('value')
+    key = request.args.get(KEY)
+    value = request.args.get(VALUE)
     if key is None or value is None:
         return BR
     s = get_store()
@@ -71,7 +74,7 @@ def put():
 
 @app.route("/remove")
 def remove():
-    key = request.args.get('key')
+    key = request.args.get(KEY)
     if key is None:
         return BR
     s = get_store()
