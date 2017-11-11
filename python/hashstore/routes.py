@@ -19,7 +19,8 @@ def get_store():
 def clear():
     s = get_store()
     size = len(s)
-    del s
+    for k in s.keys():
+        del s[k]
     s = {}
     return str(size), status.HTTP_200_OK
 
