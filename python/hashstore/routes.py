@@ -1,5 +1,6 @@
 from flask import Flask, request, abort
 from flask_api import status
+from hashstore.store import Store
 app = Flask(__name__)
 
 KEY = 'k'
@@ -7,7 +8,7 @@ VALUE = 'v'
 INDEX = 'i'
 NIL = ''
 
-store = {}
+store = Store()
 
 
 def get_store():
@@ -18,14 +19,14 @@ def get_store():
 @app.route("/clear")
 def clear():
     s = get_store()
-    size = len(s)
+    size = s.size()
     s.clear()
     return str(size), status.HTTP_200_OK
 
 
 @app.route("/size")
 def size():
-    return str(len(get_store())), status.HTTP_200_OK
+    return str(get_store().size()), status.HTTP_200_OK
 
 
 @app.route("/get")
@@ -46,11 +47,9 @@ def get():
             ind = int(index)
         except ValueError:
             abort(status.HTTP_400_BAD_REQUEST)
-        i = 0
-        for k, _ in s.items():
-            if i == ind:
-                return k, status.HTTP_200_OK
-            i += 1
+        k = s.key(ind)
+        if k is not None:
+            return k
         return NIL, status.HTTP_204_NO_CONTENT
 
 
@@ -62,7 +61,7 @@ def put():
         abort(status.HTTP_400_BAD_REQUEST)
     s = get_store()
     old_value = s.get(key)
-    s[key] = value
+    s.put(key, value)
     if old_value is None:
         return NIL, status.HTTP_200_OK
     else:
@@ -79,5 +78,5 @@ def remove():
     if old_value is None:
         return NIL, status.HTTP_204_NO_CONTENT
     else:
-        del s[key]
+        s.remove(key)
         return old_value, status.HTTP_200_OK
