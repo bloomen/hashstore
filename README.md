@@ -1,1 +1,1 @@
-A simple hash store.
+A simple key-value-store.
