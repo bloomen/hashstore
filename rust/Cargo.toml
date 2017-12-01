@@ -1,0 +1,9 @@
+[package]
+name = "hashstore"
+version = "0.1.0"
+authors = ["Christian Blume <chr.blume@gmail.com>"]
+
+[dependencies]
+civet = "0.8"
+conduit = "0.7"
+conduit-router = "0.7"
