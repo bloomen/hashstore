@@ -5,35 +5,34 @@ extern crate conduit_router;
 mod store;
 use store::Store;
 
-use std::collections::HashMap;
-use std::io::{self, Cursor};
+mod routes;
+
 use std::sync::mpsc::channel;
+use std::sync::{Arc, Mutex};
 
-use civet::{Config, response, Server};
-use conduit::{Request, Response};
-use conduit_router::{RouteBuilder, RequestParams};
+use civet::{Config, Server};
+use conduit_router::RouteBuilder;
 
-fn name(req: &mut Request) -> io::Result<Response> {
-    let name = req.params().find("name").unwrap();
-    let bytes = format!("Hello {}!", name).into_bytes();
-    Ok(response(200, HashMap::new(), Cursor::new(bytes)))
-}
-
-fn hello(_req: &mut Request) -> io::Result<Response> {
-    Ok(response(200, HashMap::new(), "Hello world!".as_bytes()))
-}
 
 fn main() {
-    let _s = Store::new();
+    let s = Arc::new(Mutex::new(Store::new()));
+
+    let port = 5003;
+    let host = "127.0.0.1";
 
     let mut router = RouteBuilder::new();
 
-    router.get("/", hello);
-    router.get("/:name", name);
+    router.get("/clear", routes::Clear::new(s.clone()));
+    router.get("/size", routes::Size::new(s.clone()));
+    router.get("/get", routes::Get::new(s.clone()));
+    router.get("/put", routes::Put::new(s.clone()));
+    router.get("/remove", routes::Remove::new(s.clone()));
 
     let mut cfg = Config::new();
-    cfg.port(5003).threads(1);
+    cfg.port(port).threads(1);
     let _server = Server::start(cfg, router);
+
+    println!("Serving on {}:{}", host, port);
 
     // Preventing process exit.
     let (_tx, rx) = channel::<()>();
