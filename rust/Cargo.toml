@@ -7,3 +7,4 @@ authors = ["Christian Blume <chr.blume@gmail.com>"]
 civet = "0.8"
 conduit = "0.7"
 conduit-router = "0.7"
+url = "1.6.0"

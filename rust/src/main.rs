@@ -1,6 +1,7 @@
 extern crate civet;
 extern crate conduit;
 extern crate conduit_router;
+extern crate url;
 
 mod store;
 use store::Store;

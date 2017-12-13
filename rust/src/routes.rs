@@ -1,11 +1,11 @@
 use civet::response;
 use conduit::{Request, Response, Handler};
-use conduit_router::RequestParams;
 use std::collections::HashMap;
 use store::Store;
 use std::error::Error;
 use std::sync::{Arc, Mutex};
 use std::io::Cursor;
+use url::Url;
 
 
 static KEY: &'static str = "k";
@@ -19,6 +19,18 @@ fn log_req(req: &Request) {
     match req.query_string() {
         Some(value) => println!(" {}", value),
         None => println!(""),
+    }
+}
+
+
+fn query_params(req: &Request) -> HashMap<String, String> {
+    match req.query_string() {
+        Some(value) => {
+            let url = "http://localhost?".to_string() + value;
+            let parsed_url = Url::parse(&url).unwrap();
+            parsed_url.query_pairs().into_owned().collect()
+        }
+        None => HashMap::new(),
     }
 }
 
@@ -81,8 +93,9 @@ impl Handler for Get {
     fn call(&self, req: &mut Request) -> Result<Response, Box<Error + Send>> {
         log_req(req);
         let o = self.s.lock().unwrap();
-        let key = req.params().find(KEY);
-        let index = req.params().find(INDEX);
+        let params = query_params(req);
+        let key = params.get(KEY);
+        let index = params.get(INDEX);
         if key.is_none() && index.is_none() {
             return Ok(response(400, HashMap::new(), NIL.as_bytes()));
         } else if key.is_some() {
@@ -127,8 +140,9 @@ impl Handler for Put {
     fn call(&self, req: &mut Request) -> Result<Response, Box<Error + Send>> {
         log_req(req);
         let mut o = self.s.lock().unwrap();
-        let key = req.params().find(KEY);
-        let value = req.params().find(VALUE);
+        let params = query_params(req);
+        let key = params.get(KEY);
+        let value = params.get(VALUE);
         if key.is_none() || value.is_none() {
             return Ok(response(400, HashMap::new(), NIL.as_bytes()));
         } else {
@@ -167,7 +181,8 @@ impl Handler for Remove {
     fn call(&self, req: &mut Request) -> Result<Response, Box<Error + Send>> {
         log_req(req);
         let mut o = self.s.lock().unwrap();
-        let key = req.params().find(KEY);
+        let params = query_params(req);
+        let key = params.get(KEY);
         if key.is_none() {
             return Ok(response(400, HashMap::new(), NIL.as_bytes()));
         } else {
