@@ -6,3 +6,5 @@ __pycache__
 hashstore.db
 *.lock
 target
+bin
+pkg

@@ -1,7 +1,7 @@
+#!/usr/bin/env python
 import unittest
 import requests
 import sys
-
 
 PORT = 5001
 
