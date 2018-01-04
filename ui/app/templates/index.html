@@ -1,3 +1,91 @@
-<html>
-blah blah
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>
+        Key-value store
+    </title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="http://www.tutorialspoint.com/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+    $("#search").click(function(){
+
+        var input = document.getElementById("searchKey").value;
+        $.get("get?k="+input, function(data, status){
+            document.getElementById("searchValue").value = data;
+            //alert("Data: " + data + "\nStatus: " + status);
+        });
+    });
+
+    $("#add").click(function(){
+        
+        var input1 = document.getElementById("addKey").value;
+        var input2 = document.getElementById("addValue").value;
+        $.get("put?k="+input1+"&v="+input2, function(data, status){
+            alert("Data: " + data + "\nStatus: " + status);
+        });
+    });
+});
+</script>
+
+</head>
+
+<body>
+  <br>
+  <br>
+  <div class="container" >
+  <div class = "row col-md-2">
+    <button class="btn-secondary form-control" id = "add">Add/Replace</button>
+  </div>
+    <br>
+    <br>
+    <label>Key</label>
+    <input type="text" id="addKey" class="form-control">
+    <label>Value</label>
+    <input type="text" id="addValue" class="form-control">
+  </div>
+  <br>
+  <br>
+  <br>
+  <div class=container>
+    <div class = "row col-md-2">
+      <button class="btn-secondary form-control" id="delete">Delete</button>
+    </div>
+    <br>
+    <br>
+    <label>Key</label>
+    <input type="text" id="deleteKey" class="form-control">
+    <label>Value</label>
+    <input type= "text" id="deleteValue" class="form-control" disabled>
+  </div>
+  <br>
+  <br>
+  <br>
+  <div class=container>
+    <div class = "row col-md-2">
+      <button class="btn-secondary form-control" id="search">Search</button>
+    </div>
+    <br>
+    <br>
+    <label>Key</label>
+    <input type="text" id="searchKey" class="form-control">
+    <label>Value</label>
+    <input type="text" id="searchValue" class="form-control" disabled>
+  </div>
+
+</body>
 </html>
