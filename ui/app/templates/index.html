@@ -1,49 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-
     <title>
         Key-value store
     </title>
-
-    <!-- Bootstrap Core CSS -->
     <link href="http://www.tutorialspoint.com/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Custom CSS -->
-
-
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script>
+jQuery.ajaxSetup({async:false});
 $(document).ready(function(){
     $("#search").click(function(){
 
         var input = document.getElementById("searchKey").value;
         $.get("get?k="+input, function(data, status){
             document.getElementById("searchValue").value = data;
-            //alert("Data: " + data + "\nStatus: " + status);
+            alert("Data: " + data + "\nStatus: " + status);
         });
     });
 
     $("#add").click(function(){
-        
+
         var input1 = document.getElementById("addKey").value;
         var input2 = document.getElementById("addValue").value;
+
         $.get("put?k="+input1+"&v="+input2, function(data, status){
             alert("Data: " + data + "\nStatus: " + status);
         });
+        document.getElementById("addKey").value = "";
+        document.getElementById("addValue").value = "";
     });
+
+    $("#delete").click(function(){
+
+        var input1 = document.getElementById("deleteKey").value;
+        $.get("remove?k="+input1, function(data, status){
+            alert("Data: " + data + "\nStatus: " + status);
+        });
+        document.getElementById("deleteKey").value = "";
+    });
+
+    $("#list").click(function(){
+        $.get("size", function(data, status){
+            var numPairs = parseInt(data);
+              $("#myTable tr").remove();
+              for(i=0; i<numPairs; i++){
+                console.log("i="+i);
+                var keyToInsert;
+                var valueToInsert;
+                $.get("get?i="+i, function(data, status){
+                  console.log("key="+data);
+                    keyToInsert = data;
+                    $.get("get?k="+keyToInsert, function(data, status){
+                      console.log("value="+data);
+                        valueToInsert = data;
+                        var table = document.getElementById("myTable");
+                        var row = table.insertRow(i);
+                        var cell1 = row.insertCell(0);
+                        var cell2 = row.insertCell(1);
+                        cell1.innerHTML = keyToInsert;
+                        cell2.innerHTML = valueToInsert;
+                    });
+                  });
+              }
+        });
+      });
+      $("#deleteList").click(function(){
+        $.get("clear");
+        $("#myTable tr").remove();
+      });
 });
 </script>
-
 </head>
-
 <body>
   <br>
   <br>
@@ -86,6 +118,21 @@ $(document).ready(function(){
     <label>Value</label>
     <input type="text" id="searchValue" class="form-control" disabled>
   </div>
-
+  <br>
+  <br>
+  <br>
+  <div class=container>
+    <div class = "row col-md-2">
+      <button class="btn-primary form-control" id="list">List all pairs</button>
+    </div>
+    <div class = "col-md-2">
+      <button class="btn-primary form-control" id="deleteList">Delete all pairs</button>
+    </div>
+  </div>
+  <br>
+    <div class = container>
+    <table id="myTable">
+    </table>
+   </div>
 </body>
 </html>
